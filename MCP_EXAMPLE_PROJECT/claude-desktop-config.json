@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "example-mcp-server": {
+      "command": "/Users/username/.nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "/full/path/to/MCP_EXAMPLE_PROJECT/dist/index.js",
+        "--stdio"
+      ],
+      "cwd": "/full/path/to/MCP_EXAMPLE_PROJECT",
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}
