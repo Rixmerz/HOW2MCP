@@ -1,5 +1,16 @@
 # Model Context Protocol (MCP) Implementation and Architecture Guide
 
+## 🆕 2025 Edition
+
+This guide has been enhanced with **2025 best practices** and modern implementation patterns. For deeper dives into specific topics, see:
+
+- **[MCP_ARCHITECTURE_2025.md](./MCP_ARCHITECTURE_2025.md)** - Modern architecture patterns and component design
+- **[MCP_TECH_STACK_2025.md](./MCP_TECH_STACK_2025.md)** - Technology recommendations and tooling
+- **[MCP_ADVANCED_PATTERNS_2025.md](./MCP_ADVANCED_PATTERNS_2025.md)** - Production-ready patterns (caching, streaming, versioning)
+- **[MCP_WORKFLOWS_2025.md](./MCP_WORKFLOWS_2025.md)** - Complete connection and execution flows
+- **[MCP_CHECKLIST_2025.md](./MCP_CHECKLIST_2025.md)** - 100+ item production readiness checklist
+- **[MCP_EMERGING_TRENDS_2025.md](./MCP_EMERGING_TRENDS_2025.md)** - Latest research and innovations
+
 ## Table of Contents
 
 1. [Architecture Analysis](#architecture-analysis)
@@ -8,8 +19,9 @@
 4. [Technical Standards](#technical-standards)
 5. [Project Examples](#project-examples)
 6. [Best Practices](#best-practices)
-7. [Testing and Validation](#testing-and-validation)
-8. [Troubleshooting](#troubleshooting)
+7. [2025 Best Practices](#2025-best-practices)
+8. [Testing and Validation](#testing-and-validation)
+9. [Troubleshooting](#troubleshooting)
 
 ## Architecture Analysis
 
@@ -596,6 +608,527 @@ class MCPServer {
 - **Descriptive**: Clear names and descriptions
 - **Validated**: Always validate inputs
 - **Documented**: Comprehensive input schemas
+
+## 2025 Best Practices
+
+### 1. Zod + JSON Schema Integration Pattern
+
+The recommended 2025 approach combines Zod for runtime validation with automatic JSON Schema conversion for tool registration.
+
+#### Installation
+```bash
+npm install zod zod-to-json-schema
+```
+
+#### Implementation Pattern
+```typescript
+import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+
+// Define Zod schema for runtime validation
+const SearchToolSchema = z.object({
+  query: z.string().min(1).describe('Search query'),
+  filters: z.object({
+    category: z.enum(['docs', 'code', 'api']).optional(),
+    maxResults: z.number().int().min(1).max(100).default(10)
+  }).optional().describe('Optional search filters'),
+  includeArchived: z.boolean().optional().default(false)
+}).describe('Search tool input parameters');
+
+// Type inference
+type SearchToolInput = z.infer<typeof SearchToolSchema>;
+
+// Convert to JSON Schema for MCP registration
+const searchToolJsonSchema = zodToJsonSchema(SearchToolSchema, 'SearchTool');
+
+// Tool registration with converted schema
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [{
+      name: 'search',
+      description: 'Search across documentation and code',
+      inputSchema: searchToolJsonSchema // JSON Schema format required for MCP
+    }]
+  };
+});
+
+// Tool handler with Zod validation
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  if (name === 'search') {
+    // Runtime validation with Zod
+    const validated = SearchToolSchema.parse(args); // Type-safe
+
+    // Execute with validated input
+    const results = await performSearch(validated);
+
+    return {
+      content: [{ type: 'text', text: JSON.stringify(results, null, 2) }]
+    };
+  }
+});
+```
+
+**Benefits**:
+- **Type Safety**: Automatic TypeScript types from Zod schemas
+- **Runtime Validation**: Catch invalid inputs before execution
+- **Single Source of Truth**: One schema definition for both validation and registration
+- **Better DX**: Clear error messages from Zod validation
+
+### 2. Multi-Layer Caching Strategy
+
+Implement a three-tier cache system for optimal performance.
+
+```typescript
+import Redis from 'ioredis';
+
+class MultiLayerCache<T> {
+  private memoryCache = new Map<string, { value: T; expiresAt: number }>();
+  private redis: Redis;
+  private readonly memoryTTL = 60; // 1 minute
+  private readonly redisTTL = 3600; // 1 hour
+
+  constructor(redisUrl: string) {
+    this.redis = new Redis(redisUrl);
+  }
+
+  async get(
+    key: string,
+    fetcher: () => Promise<T>,
+    ttl: number = this.redisTTL
+  ): Promise<T> {
+    // Layer 1: Memory cache (fastest, ephemeral)
+    const memEntry = this.memoryCache.get(key);
+    if (memEntry && memEntry.expiresAt > Date.now()) {
+      return memEntry.value;
+    }
+
+    // Layer 2: Redis cache (fast, distributed)
+    const redisValue = await this.redis.get(key);
+    if (redisValue) {
+      const parsed = JSON.parse(redisValue) as T;
+
+      // Populate memory cache
+      this.memoryCache.set(key, {
+        value: parsed,
+        expiresAt: Date.now() + this.memoryTTL * 1000
+      });
+
+      return parsed;
+    }
+
+    // Layer 3: Cache miss - fetch fresh data
+    const freshData = await fetcher();
+
+    // Populate all cache layers
+    await this.set(key, freshData, ttl);
+
+    return freshData;
+  }
+
+  async set(key: string, value: T, ttl: number = this.redisTTL): Promise<void> {
+    // Update memory cache
+    this.memoryCache.set(key, {
+      value,
+      expiresAt: Date.now() + this.memoryTTL * 1000
+    });
+
+    // Update Redis cache
+    await this.redis.setex(key, ttl, JSON.stringify(value));
+  }
+
+  async invalidate(key: string): Promise<void> {
+    this.memoryCache.delete(key);
+    await this.redis.del(key);
+  }
+}
+
+// Usage in MCP server
+const cache = new MultiLayerCache<any>(process.env.REDIS_URL!);
+
+async function handleCachedTool(args: any) {
+  const cacheKey = `tool:${args.query}`;
+
+  return await cache.get(cacheKey, async () => {
+    // Expensive operation only runs on cache miss
+    return await performExpensiveOperation(args);
+  });
+}
+```
+
+### 3. Streaming Responses with Server-Sent Events
+
+For long-running operations, implement streaming responses using HTTP + SSE transport.
+
+```typescript
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import express from 'express';
+
+class StreamingMCPServer {
+  private server: Server;
+  private app: express.Application;
+
+  constructor() {
+    this.server = new Server(
+      { name: 'streaming-mcp-server', version: '1.0.0' },
+      { capabilities: { tools: {} } }
+    );
+
+    this.app = express();
+  }
+
+  async initialize(): Promise<void> {
+    // Register streaming tool
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      const { name, arguments: args } = request.params;
+
+      if (name === 'long-running-task') {
+        return await this.handleStreamingTask(args);
+      }
+    });
+
+    // Setup SSE endpoint
+    this.app.get('/sse', async (req, res) => {
+      const transport = new SSEServerTransport('/message', res);
+      await this.server.connect(transport);
+    });
+
+    this.app.post('/message', express.json(), async (req, res) => {
+      // Handle incoming messages
+    });
+  }
+
+  private async handleStreamingTask(args: any): Promise<any> {
+    const totalSteps = 100;
+    const results: string[] = [];
+
+    for (let i = 0; i < totalSteps; i++) {
+      // Process step
+      const stepResult = await this.processStep(i, args);
+      results.push(stepResult);
+
+      // Send progress notification (if MCP protocol supports)
+      if (i % 10 === 0) {
+        await this.sendProgress({
+          current: i,
+          total: totalSteps,
+          percentage: (i / totalSteps) * 100
+        });
+      }
+    }
+
+    return {
+      content: [{
+        type: 'text',
+        text: `Completed ${totalSteps} steps: ${results.join(', ')}`
+      }]
+    };
+  }
+
+  async start(port: number = 3000): Promise<void> {
+    this.app.listen(port, () => {
+      console.error(`Streaming MCP server listening on port ${port}`);
+    });
+  }
+}
+```
+
+### 4. Capability-Based Access Control
+
+Implement fine-grained access control using capability tokens.
+
+```typescript
+import { z } from 'zod';
+
+const CapabilitySchema = z.enum([
+  'tools:read',
+  'tools:execute',
+  'resources:read',
+  'resources:write',
+  'prompts:read'
+]);
+
+type Capability = z.infer<typeof CapabilitySchema>;
+
+class CapabilityManager {
+  private userCapabilities = new Map<string, Set<Capability>>();
+
+  grantCapability(userId: string, capability: Capability): void {
+    if (!this.userCapabilities.has(userId)) {
+      this.userCapabilities.set(userId, new Set());
+    }
+    this.userCapabilities.get(userId)!.add(capability);
+  }
+
+  hasCapability(userId: string, capability: Capability): boolean {
+    const capabilities = this.userCapabilities.get(userId);
+    return capabilities ? capabilities.has(capability) : false;
+  }
+
+  checkCapability(userId: string, capability: Capability): void {
+    if (!this.hasCapability(userId, capability)) {
+      throw new McpError(
+        ErrorCode.InvalidRequest,
+        `Missing required capability: ${capability}`
+      );
+    }
+  }
+}
+
+// Usage in MCP server
+const capabilityManager = new CapabilityManager();
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const userId = extractUserId(request); // Extract from auth token
+
+  // Check capabilities before execution
+  capabilityManager.checkCapability(userId, 'tools:execute');
+
+  const { name, arguments: args } = request.params;
+  // Execute tool...
+});
+```
+
+### 5. Versioning Strategies
+
+Implement backward-compatible API versioning.
+
+```typescript
+// Version negotiation during initialization
+server.setRequestHandler(InitializeRequestSchema, async (request) => {
+  const clientVersion = request.params.protocolVersion;
+  const serverVersion = '2025-01';
+
+  // Version compatibility check
+  if (!isCompatible(clientVersion, serverVersion)) {
+    throw new McpError(
+      ErrorCode.InvalidRequest,
+      `Protocol version ${clientVersion} not supported. Server supports ${serverVersion}`
+    );
+  }
+
+  return {
+    protocolVersion: serverVersion,
+    capabilities: getCapabilitiesForVersion(clientVersion),
+    serverInfo: {
+      name: 'my-mcp-server',
+      version: '2.0.0'
+    }
+  };
+});
+
+// Versioned tool definitions
+server.setRequestHandler(ListToolsRequestSchema, async (request) => {
+  const clientVersion = getClientVersion(request);
+
+  return {
+    tools: getToolsForVersion(clientVersion)
+  };
+});
+
+function getToolsForVersion(version: string): any[] {
+  const commonTools = [
+    // Tools available in all versions
+  ];
+
+  if (isVersionAtLeast(version, '2025-01')) {
+    return [
+      ...commonTools,
+      // New 2025 tools with enhanced capabilities
+      {
+        name: 'semantic-search-v2',
+        description: 'Enhanced semantic search with vector embeddings',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: { type: 'string' },
+            useVectorSearch: { type: 'boolean', default: true } // New parameter
+          },
+          required: ['query']
+        }
+      }
+    ];
+  }
+
+  return commonTools;
+}
+
+// Backward compatible parameter handling
+async function handleSearchTool(args: any, version: string) {
+  const query = args.query;
+
+  if (isVersionAtLeast(version, '2025-01') && args.useVectorSearch) {
+    // Use new vector search for modern clients
+    return await vectorSearch(query);
+  } else {
+    // Use traditional search for older clients
+    return await traditionalSearch(query);
+  }
+}
+```
+
+### 6. Observability with OpenTelemetry
+
+Implement comprehensive observability for production deployments.
+
+```typescript
+import { trace, context, SpanStatusCode } from '@opentelemetry/api';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+
+// Initialize OpenTelemetry
+const provider = new NodeTracerProvider();
+provider.register();
+
+const tracer = trace.getTracer('mcp-server', '1.0.0');
+
+// Metrics exporter
+const metricsExporter = new PrometheusExporter({ port: 9464 });
+
+// Instrumented tool handler
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  // Create span for tracing
+  return await tracer.startActiveSpan(`tool.${name}`, async (span) => {
+    try {
+      // Add span attributes
+      span.setAttribute('tool.name', name);
+      span.setAttribute('tool.args', JSON.stringify(args));
+
+      // Execute tool
+      const result = await executeTool(name, args);
+
+      // Record success
+      span.setStatus({ code: SpanStatusCode.OK });
+      span.setAttribute('tool.result.size', JSON.stringify(result).length);
+
+      return result;
+    } catch (error) {
+      // Record error
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: error.message
+      });
+      span.recordException(error);
+
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
+});
+
+// Structured logging with correlation IDs
+class Logger {
+  log(level: string, message: string, meta: any = {}) {
+    const correlationId = context.active().getValue('correlationId');
+
+    console.error(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level,
+      message,
+      correlationId,
+      ...meta
+    }));
+  }
+
+  info(message: string, meta?: any) { this.log('info', message, meta); }
+  error(message: string, meta?: any) { this.log('error', message, meta); }
+  warn(message: string, meta?: any) { this.log('warn', message, meta); }
+}
+
+const logger = new Logger();
+```
+
+### 7. Error Recovery and Circuit Breakers
+
+Implement resilient error handling with circuit breaker pattern.
+
+```typescript
+class CircuitBreaker {
+  private failureCount = 0;
+  private lastFailureTime = 0;
+  private state: 'CLOSED' | 'OPEN' | 'HALF_OPEN' = 'CLOSED';
+
+  constructor(
+    private threshold: number = 5,
+    private timeout: number = 60000,
+    private name: string = 'circuit'
+  ) {}
+
+  async execute<T>(operation: () => Promise<T>): Promise<T> {
+    if (this.state === 'OPEN') {
+      if (Date.now() - this.lastFailureTime > this.timeout) {
+        this.state = 'HALF_OPEN';
+      } else {
+        throw new Error(`Circuit breaker ${this.name} is OPEN`);
+      }
+    }
+
+    try {
+      const result = await operation();
+
+      if (this.state === 'HALF_OPEN') {
+        this.state = 'CLOSED';
+        this.failureCount = 0;
+      }
+
+      return result;
+    } catch (error) {
+      this.failureCount++;
+      this.lastFailureTime = Date.now();
+
+      if (this.failureCount >= this.threshold) {
+        this.state = 'OPEN';
+        console.error(`Circuit breaker ${this.name} opened after ${this.failureCount} failures`);
+      }
+
+      throw error;
+    }
+  }
+}
+
+// Usage with external dependencies
+const apiCircuitBreaker = new CircuitBreaker(5, 60000, 'external-api');
+
+async function handleToolWithExternalAPI(args: any) {
+  try {
+    return await apiCircuitBreaker.execute(async () => {
+      return await callExternalAPI(args);
+    });
+  } catch (error) {
+    // Graceful degradation
+    if (error.message.includes('Circuit breaker')) {
+      return {
+        content: [{
+          type: 'text',
+          text: 'Service temporarily unavailable. Using cached data.'
+        }]
+      };
+    }
+    throw error;
+  }
+}
+```
+
+### 8. Production Deployment Checklist
+
+Before deploying to production, ensure:
+
+- ✅ **Input Validation**: All tools use Zod schemas with proper validation
+- ✅ **Caching**: Multi-layer cache implemented for expensive operations
+- ✅ **Monitoring**: OpenTelemetry tracing and Prometheus metrics configured
+- ✅ **Error Handling**: Circuit breakers and graceful degradation implemented
+- ✅ **Versioning**: API versioning strategy defined and implemented
+- ✅ **Security**: Capability-based access control configured
+- ✅ **Logging**: Structured logging with correlation IDs
+- ✅ **Testing**: >80% code coverage with integration tests
+- ✅ **Documentation**: All tools documented with JSON Schema examples
+
+For a comprehensive checklist, see [MCP_CHECKLIST_2025.md](./MCP_CHECKLIST_2025.md).
 
 ## Testing and Validation
 

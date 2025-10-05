@@ -2,20 +2,36 @@
 
 This is a complete example implementation of a Model Context Protocol (MCP) server that demonstrates best practices and patterns extracted from real-world MCP projects.
 
+## 🆕 2025 Edition
+
+Now includes **3 new tools** demonstrating 2025 best practices:
+- **Streaming responses** with progress notifications
+- **Multi-layer caching** (Memory → Redis → Database pattern)
+- **API versioning** with backward compatibility
+
 ## Features
 
 - **Complete MCP Implementation**: Follows all MCP protocol specifications
 - **TypeScript**: Full type safety and modern development experience
 - **Best Practices**: Error handling, logging, validation, and testing
-- **Example Tools**: 4 different tools demonstrating various patterns
+- **Example Tools**: 7 tools demonstrating various patterns (4 basic + 3 advanced)
 - **Production Ready**: Proper error handling, logging, and graceful shutdown
+- **2025 Patterns**: Streaming, caching, and versioning implementations
 
 ## Tools Included
+
+### Basic Tools
 
 1. **echo** - Simple text echoing with repetition
 2. **calculator** - Basic mathematical operations
 3. **data-processor** - Array processing with multiple operations
 4. **status** - Server health and system information
+
+### 🆕 2025 Pattern Tools
+
+5. **streaming-task** - Demonstrates streaming responses with progress notifications for long-running operations
+6. **cached-search** - Demonstrates multi-layer caching strategy (Memory → Redis → Database)
+7. **versioned-api** - Demonstrates API versioning with backward compatibility (v1/v2)
 
 ## Quick Start
 
@@ -122,6 +138,18 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"data-proce
 
 # Test status
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"status","arguments":{"includeSystemInfo":true}}}' | npm start
+
+# 🆕 Test streaming task (2025 pattern)
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"streaming-task","arguments":{"taskName":"data-processing","steps":20,"delayMs":50}}}' | npm start
+
+# 🆕 Test cached search (2025 pattern)
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"cached-search","arguments":{"query":"machine learning","useCache":true,"cacheTTL":300}}}' | npm start
+
+# 🆕 Test versioned API v2 (2025 pattern)
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"versioned-api","arguments":{"action":"get-user","userId":"123","apiVersion":"v2"}}}' | npm start
+
+# 🆕 Test versioned API v1 (backward compatibility)
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"versioned-api","arguments":{"action":"get-user","userId":"123","apiVersion":"v1"}}}' | npm start
 ```
 
 ### Expected Responses
