@@ -9,10 +9,11 @@ This repository provides **everything** you need to master MCP in 2025:
 - **🏗️ 2025 Architecture Guides** - Modern patterns, modular design, capability-based access
 - **🔧 Technology Stack** - Recommended tools, databases, and frameworks
 - **⚡ Advanced Patterns** - Caching, streaming, versioning, error recovery
-- **📚 Complete Documentation** - 10+ comprehensive guides covering all aspects
+- **📚 Complete Documentation** - 13+ comprehensive guides covering all aspects
 - **💻 Working Examples** - Production-ready implementations
 - **📊 Emerging Trends** - Code2MCP, AutoMCP, MCP Bridge, MCP-Bench
 - **✅ Implementation Checklist** - 100+ items for production readiness
+- **☁️ Cloudflare Integration** - Code Mode, remote deployment, and best practices
 
 ## 🆕 What's New in 2025
 
@@ -35,6 +36,12 @@ This repository provides **everything** you need to master MCP in 2025:
 - **MCP Bridge**: RESTful proxy for universal access
 - **AutoMCP**: Generate servers from OpenAPI specs
 - **MCP-Bench**: Benchmark suite with 250+ evaluation tasks
+
+### Cloudflare Integration (2025)
+- **Code Mode**: Revolutionary TypeScript API approach for AI agents
+- **Remote Deployment**: Host MCP servers on Cloudflare Workers
+- **Edge Distribution**: Global MCP server deployment at the edge
+- **Best Practices**: Cloudflare-validated patterns and anti-patterns
 
 ## 🚀 Quick Start
 
@@ -81,6 +88,14 @@ This repository provides **everything** you need to master MCP in 2025:
 | **MCP_WORKFLOWS_2025.md** | Complete Workflows | Connection flows, tool execution, resource management, deployment |
 | **MCP_EMERGING_TRENDS_2025.md** | Research & Innovation | Code2MCP, MCP Bridge, AutoMCP, MCP-Bench, future directions |
 | **MCP_CHECKLIST_2025.md** | Production Readiness | 100+ checklist items across architecture, security, performance |
+
+### ☁️ Cloudflare Integration (`/MCP-DOCS/`)
+
+| File | Focus | Key Topics |
+|------|-------|------------|
+| **MCP_CODE_MODE_2025.md** | Cloudflare Code Mode | TypeScript API approach, sandbox execution, goal-oriented tools |
+| **MCP_REMOTE_DEPLOYMENT_2025.md** | Remote MCP Servers | Cloudflare Workers, HTTP+SSE, WebSocket, authentication, scaling |
+| **MCP_ANTI_PATTERNS_2025.md** | Common Mistakes | What NOT to do, anti-patterns, Cloudflare best practices |
 
 ### Core Documentation (`/MCP-DOCS/`)
 
@@ -162,11 +177,14 @@ npx @modelcontextprotocol/inspector node dist/index.js
 1. **Architecture First** - Read `MCP_ARCHITECTURE_2025.md` for modern design patterns
 2. **Technology Stack** - Review `MCP_TECH_STACK_2025.md` for tool selection
 3. **Implementation Guide** - Follow `MCP_IMPLEMENTATION_GUIDE.md` for step-by-step setup
-4. **Advanced Patterns** - Study `MCP_ADVANCED_PATTERNS_2025.md` for production techniques
-5. **Workflows** - Learn complete flows in `MCP_WORKFLOWS_2025.md`
-6. **Checklist** - Validate with `MCP_CHECKLIST_2025.md` (100+ items)
-7. **Examples** - Explore working code in `/MCP_EXAMPLE_PROJECT/`
-8. **Build** - Create your own MCP server using learned patterns
+4. **Cloudflare Code Mode** - Learn `MCP_CODE_MODE_2025.md` for revolutionary approach
+5. **Advanced Patterns** - Study `MCP_ADVANCED_PATTERNS_2025.md` for production techniques
+6. **Anti-Patterns** - Avoid mistakes with `MCP_ANTI_PATTERNS_2025.md`
+7. **Remote Deployment** - Scale with `MCP_REMOTE_DEPLOYMENT_2025.md`
+8. **Workflows** - Learn complete flows in `MCP_WORKFLOWS_2025.md`
+9. **Checklist** - Validate with `MCP_CHECKLIST_2025.md` (100+ items)
+10. **Examples** - Explore working code in `/MCP_EXAMPLE_PROJECT/`
+11. **Build** - Create your own MCP server using learned patterns
 
 ### 🏃 Quick Start Path
 
@@ -221,11 +239,12 @@ MIT License - Feel free to use this for learning and building your own MCP serve
 
 ## 📊 Stats
 
-- **📄 6 New 2025 Guides** covering modern architecture and patterns
+- **📄 9 Comprehensive 2025 Guides** covering modern architecture and patterns
+- **☁️ 3 Cloudflare Integration Guides** for Code Mode and remote deployment
 - **📚 3 Core Documentation Files** for comprehensive reference
 - **💻 1 Complete Example Project** with 4 working tools
 - **✅ 100+ Checklist Items** for production readiness
-- **🔬 Latest Research** including Code2MCP, AutoMCP, MCP-Bench
+- **🔬 Latest Research** including Code2MCP, AutoMCP, MCP-Bench, Cloudflare Code Mode
 
 ---
 

@@ -2,14 +2,20 @@
 
 ## 🆕 2025 Edition
 
-This guide has been enhanced with **2025 best practices** and modern implementation patterns. For deeper dives into specific topics, see:
+This guide has been enhanced with **2025 best practices** and modern implementation patterns, including **Cloudflare Code Mode** innovations. For deeper dives into specific topics, see:
 
+### Core Documentation
 - **[MCP_ARCHITECTURE_2025.md](./MCP_ARCHITECTURE_2025.md)** - Modern architecture patterns and component design
 - **[MCP_TECH_STACK_2025.md](./MCP_TECH_STACK_2025.md)** - Technology recommendations and tooling
 - **[MCP_ADVANCED_PATTERNS_2025.md](./MCP_ADVANCED_PATTERNS_2025.md)** - Production-ready patterns (caching, streaming, versioning)
 - **[MCP_WORKFLOWS_2025.md](./MCP_WORKFLOWS_2025.md)** - Complete connection and execution flows
 - **[MCP_CHECKLIST_2025.md](./MCP_CHECKLIST_2025.md)** - 100+ item production readiness checklist
 - **[MCP_EMERGING_TRENDS_2025.md](./MCP_EMERGING_TRENDS_2025.md)** - Latest research and innovations
+
+### 🆕 Cloudflare Integration (2025)
+- **[MCP_CODE_MODE_2025.md](./MCP_CODE_MODE_2025.md)** - Cloudflare's Code Mode: TypeScript API approach
+- **[MCP_REMOTE_DEPLOYMENT_2025.md](./MCP_REMOTE_DEPLOYMENT_2025.md)** - Remote MCP hosting with Cloudflare Workers
+- **[MCP_ANTI_PATTERNS_2025.md](./MCP_ANTI_PATTERNS_2025.md)** - Common mistakes and what NOT to do
 
 ## Table of Contents
 

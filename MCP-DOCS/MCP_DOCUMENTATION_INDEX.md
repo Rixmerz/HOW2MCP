@@ -6,12 +6,14 @@ This is the **definitive 2025 resource** for Model Context Protocol (MCP) implem
 
 ## 🆕 What's New in 2025
 
-- **6 New Comprehensive Guides** covering 2025 architecture and patterns
+- **9 Comprehensive 2025 Guides** covering modern architecture and patterns
+- **3 Cloudflare Integration Guides** for Code Mode and remote deployment
 - **Modern Technology Stack** recommendations (TypeScript, Go, Rust, Python)
 - **Advanced Patterns** for production deployments (caching, streaming, versioning)
-- **Emerging Innovations** (Code2MCP, AutoMCP, MCP Bridge, MCP-Bench)
+- **Emerging Innovations** (Code2MCP, AutoMCP, MCP Bridge, MCP-Bench, Cloudflare Code Mode)
 - **100+ Checklist Items** for production readiness
 - **Complete Workflows** from development to deployment
+- **Anti-Patterns Guide** showing what NOT to do
 
 ## Documentation Structure
 
@@ -77,6 +79,39 @@ This is the **definitive 2025 resource** for Model Context Protocol (MCP) implem
 - Testing checklist (unit, integration, performance, security)
 - Documentation checklist (code, user, developer, operational)
 - 100+ actionable items for production quality
+
+### 1.5. Cloudflare Integration (2025)
+
+#### [MCP_CODE_MODE_2025.md](./MCP_CODE_MODE_2025.md)
+**Cloudflare Code Mode** (~1200 lines)
+- Revolutionary TypeScript API approach
+- Code Mode vs traditional MCP comparison
+- Sandbox security and execution
+- Goal-oriented tool design principles
+- TypeScript API design best practices
+- Migration guide from traditional MCP
+- Performance optimization patterns
+
+#### [MCP_REMOTE_DEPLOYMENT_2025.md](./MCP_REMOTE_DEPLOYMENT_2025.md)
+**Remote MCP Server Hosting** (~900 lines)
+- Local vs remote MCP architecture
+- HTTP+SSE and WebSocket implementation
+- Cloudflare Workers deployment guide
+- Authentication and authorization (JWT, API keys)
+- Load balancing and horizontal scaling
+- Monitoring with OpenTelemetry and Prometheus
+- Production best practices
+
+#### [MCP_ANTI_PATTERNS_2025.md](./MCP_ANTI_PATTERNS_2025.md)
+**Common Mistakes and Anti-Patterns** (~1100 lines)
+- Tool design anti-patterns (API wrappers, tool explosion)
+- Architecture anti-patterns (monolithic servers, stateful chaos)
+- Security anti-patterns (missing validation, hardcoded secrets)
+- Performance anti-patterns (N+1 queries, no caching)
+- Code Mode anti-patterns (return vs console.log, async issues)
+- Documentation anti-patterns (minimal docs)
+- Deployment anti-patterns (no health checks, abrupt shutdown)
+- Cloudflare best practices validation
 
 ### 2. Core Documentation
 
@@ -303,11 +338,14 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"tool","arg
 1. **Architecture First** - `MCP_ARCHITECTURE_2025.md` for modern design patterns
 2. **Technology Selection** - `MCP_TECH_STACK_2025.md` for tool recommendations
 3. **Implementation** - `MCP_IMPLEMENTATION_GUIDE.md` for step-by-step setup
-4. **Advanced Patterns** - `MCP_ADVANCED_PATTERNS_2025.md` for production techniques
-5. **Workflows** - `MCP_WORKFLOWS_2025.md` for complete end-to-end flows
-6. **Validation** - `MCP_CHECKLIST_2025.md` for production readiness (100+ items)
-7. **Trends** - `MCP_EMERGING_TRENDS_2025.md` for latest innovations
-8. **Examples** - `/MCP_EXAMPLE_PROJECT/` for working implementations
+4. **Cloudflare Code Mode** - `MCP_CODE_MODE_2025.md` for revolutionary TypeScript API approach
+5. **Advanced Patterns** - `MCP_ADVANCED_PATTERNS_2025.md` for production techniques
+6. **Anti-Patterns** - `MCP_ANTI_PATTERNS_2025.md` to avoid common mistakes
+7. **Remote Deployment** - `MCP_REMOTE_DEPLOYMENT_2025.md` for scaling with Cloudflare Workers
+8. **Workflows** - `MCP_WORKFLOWS_2025.md` for complete end-to-end flows
+9. **Validation** - `MCP_CHECKLIST_2025.md` for production readiness (100+ items)
+10. **Trends** - `MCP_EMERGING_TRENDS_2025.md` for latest innovations
+11. **Examples** - `/MCP_EXAMPLE_PROJECT/` for working implementations
 
 ### 🏃 Quick Start Path
 
@@ -378,19 +416,21 @@ This documentation is designed to be:
 
 ## 📊 Documentation Stats
 
-- **📄 6 New 2025 Guides** (3,300+ lines of new content)
+- **📄 9 Comprehensive 2025 Guides** (6,500+ lines of content)
+- **☁️ 3 Cloudflare Integration Guides** (3,200+ lines)
 - **📚 3 Core Reference Docs** (1,000+ lines)
 - **💻 1 Complete Example Project** with 4 working tools
 - **✅ 100+ Production Checklist Items**
-- **🔬 Latest Research** and community innovations
+- **🔬 Latest Research** including Cloudflare Code Mode and community innovations
 
 ## 🎯 Key Features
 
-✅ **Comprehensive** - 9 detailed guides covering all aspects
-✅ **Modern** - 2025 best practices and technologies
+✅ **Comprehensive** - 12 detailed guides covering all aspects
+✅ **Modern** - 2025 best practices and Cloudflare innovations
 ✅ **Practical** - Real working examples, tested patterns
 ✅ **Production-Ready** - Enterprise-grade implementations
 ✅ **Well-Organized** - Multiple learning paths
 ✅ **Research-Backed** - Latest innovations and papers
+✅ **Cloudflare Integrated** - Code Mode, remote deployment, anti-patterns
 
-This documentation suite enables developers, architects, and researchers to understand and implement production-ready MCP applications using 2025 best practices and emerging technologies.
+This documentation suite enables developers, architects, and researchers to understand and implement production-ready MCP applications using 2025 best practices, emerging technologies, and Cloudflare's revolutionary Code Mode approach.
