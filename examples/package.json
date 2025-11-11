@@ -1,0 +1,40 @@
+{
+  "name": "how2mcp-examples",
+  "version": "1.0.0",
+  "description": "Progressive MCP server examples from basic to advanced",
+  "type": "module",
+  "scripts": {
+    "quickstart": "tsx quickstart.ts",
+    "basic": "tsx 01-basic.ts",
+    "intermediate": "tsx 02-intermediate.ts",
+    "advanced": "tsx 03-advanced.ts",
+    "test:quickstart": "mcp-cli tsx quickstart.ts",
+    "test:basic": "mcp-cli tsx 01-basic.ts",
+    "test:intermediate": "mcp-cli tsx 02-intermediate.ts",
+    "test:advanced": "mcp-cli tsx 03-advanced.ts",
+    "inspect:quickstart": "@modelcontextprotocol/inspector tsx quickstart.ts",
+    "inspect:basic": "@modelcontextprotocol/inspector tsx 01-basic.ts",
+    "inspect:intermediate": "@modelcontextprotocol/inspector tsx 02-intermediate.ts",
+    "inspect:advanced": "@modelcontextprotocol/inspector tsx 03-advanced.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "examples",
+    "tutorial"
+  ],
+  "author": "",
+  "license": "MIT"
+}
