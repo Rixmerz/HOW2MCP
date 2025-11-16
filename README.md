@@ -139,6 +139,10 @@ Progressive learning from simple to production-ready:
 - `MCP_QUICK_REFERENCE.md` - Essential patterns and cheat sheet
 - `MCP_DOCUMENTATION_INDEX.md` - Navigation guide
 
+**Token Optimization** (Efficiency and cost reduction)
+- `TOON_IN_MCP_TOOLS.md` - Add TOON format to tool responses (30-60% token savings)
+- `toon-mcp-server/` - Example full TOON-native MCP server (proof-of-concept)
+
 ---
 
 ## 🆕 What's New in 2025
@@ -168,6 +172,12 @@ Progressive learning from simple to production-ready:
 - **Remote Deployment** - Host MCP servers on Cloudflare Workers
 - **Edge Distribution** - Global MCP server deployment at the edge
 - **Best Practices** - Cloudflare-validated patterns and anti-patterns
+
+### Token Optimization
+- **TOON Format** - 30-60% token savings for tool responses
+- **Hybrid Approach** - TOON inside JSON-RPC for optimal efficiency
+- **Production Example** - Real implementation in Fractal MCP
+- **Implementation Guide** - [`TOON_IN_MCP_TOOLS.md`](./TOON_IN_MCP_TOOLS.md)
 
 ---
 

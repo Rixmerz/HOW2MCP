@@ -1,0 +1,31 @@
+{
+  "name": "toon-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server that consumes and returns TOON format natively",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "toon-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "watch": "tsc --watch"
+  },
+  "keywords": [
+    "mcp",
+    "toon",
+    "model-context-protocol",
+    "token-efficient"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@toon-format/toon": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}
